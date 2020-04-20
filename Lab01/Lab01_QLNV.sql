@@ -110,3 +110,47 @@ select * from ChiNhanh
 select * from NhanVien
 select * from KyNang
 select * from NhanVienKyNang
+
+-- Truy vấn dữ liệu --
+-- Q1: Hiển thị MSNV, HoTen (Ho + Ten as HoTen), số năm làm việc (SoNamLamViec)
+SELECT MANV, Ho + ' ' + Ten AS HoTen, YEAR(GETDATE()) - YEAR(NgayVaoLam) AS SoNamLamViec
+FROM NhanVien
+
+-- Q2: Liệt kê các thông tin về nhân viên: HoTen, NgaySinh, NgayVaoLam, TenCN (sắp xếp theo tên chi nhánh).
+SELECT Ho + ' ' + Ten AS HoTen, Ngaysinh, NgayVaoLam, TenCN
+FROM NhanVien, ChiNhanh
+WHERE NhanVien.MSCN = ChiNhanh.MSCN
+ORDER BY ChiNhanh.TenCN
+
+-- Q3: Liệt kê các nhân viên (HoTen, TenKN, MucDo) của những nhân viên biết sử dụng ‘Word’.
+SELECT Ho + ' ' + Ten AS HoTen, TenKN, MucDo
+FROM NhanVien, KyNang, NhanVienKyNang
+WHERE NhanVien.MANV = NhanVienKyNang.MANV and KyNang.MSKN = NhanVienKyNang.MSKN and TenKN = N'Word'
+
+-- Q4: Liệt kê các kỹ năng (TenKN, MucDo) mà nhân viên ‘Lê Anh Tuấn’ biết sử dụng.
+SELECT TenKN, MucDo
+FROM NhanVien, KyNang, NhanVienKyNang
+WHERE 
+	NhanVien.Ho = N'Lê Anh' and NhanVien.Ten = N'Tuấn' and 
+	NhanVien.MANV = NhanVienKyNang.MANV and KyNang.MSKN = NhanVienKyNang.MSKN
+
+
+-- Q5: Cho biết số người dùng của từng kĩ năng gồm MSKN, TenKN, SoND
+SELECT KyNang.MSKN, TenKN, COUNT(NhanVienKyNang.MANV) as SoND
+FROM KyNang, NhanVienKyNang
+WHERE KyNang.MSKN = NhanVienKyNang.MSKN
+GROUP BY KyNang.MSKN, TenKN
+
+-- Q6: Cho biết những kĩ năng có trên 3 người dùng
+SELECT KyNang.MSKN, TenKN, COUNT(NhanVienKyNang.MANV) as SoND
+FROM KyNang, NhanVienKyNang
+WHERE KyNang.MSKN = NhanVienKyNang.MSKN
+GROUP BY KyNang.MSKN, TenKN
+HAVING COUNT(NhanVienKyNang.MANV) > 3
+
+-- Q7: Liệt kê nhân viên biết từ 3 kỹ năng trở lên
+SELECT NhanVien.MANV, Ho, Ten, Ngaysinh, COUNT(MSKN) AS SoKN
+FROM NhanVien, NhanVienKyNang
+WHERE NhanVien.MANV = NhanVienKyNang.MANV
+GROUP BY NhanVien.MANV, Ho, Ten, Ngaysinh
+HAVING COUNT(MSKN) >= 3
