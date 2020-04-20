@@ -89,3 +89,23 @@ SELECT * FROM CongNhan
 SELECT * FROM SanPham
 SELECT * FROM ThanhPham
 
+-- Truy vấn dữ liệu từ CSDL --
+-- Q1: Cho biết thông tin các công nhân làm việc tại Tố sản xuất 'TS02'
+SELECT MaCN, Ho + ' ' + Ten AS HoTen, Phai, NgaySinh
+FROM CongNhan
+WHERE CongNhan.MaTSX = 'TS02'
+
+-- Q2: Lập danh sách công nhân sinh sau năm 1980
+SELECT MaCN, Ho + ' ' + Ten AS HoTen, Phai, NgaySinh
+FROM CongNhan
+WHERE YEAR(CongNhan.NgaySinh) > 1980
+
+-- Q3: Lập danh sách công nhân sản xuất 'Bình gốm lớn'
+SELECT CongNhan.MaCN, Ho + ' ' + Ten AS HoTen, SanPham.TenSP, ThanhPham.SoLuong, SanPham.DVT
+FROM CongNhan, SanPham, ThanhPham
+WHERE CongNhan.MaCN = ThanhPham.MaCN and SanPham.MaSP = ThanhPham.MaSP and SanPham.TenSP = N'Bình gốm lớn'
+
+-- Q4: Lập danh sách sản phẩm sản xuất trong tháng 1/2007
+SELECT SanPham.MaSP, TenSP, SoLuong, DVT, Ngay
+FROM SanPham, ThanhPham
+WHERE SanPham.MaSP = ThanhPham.MaSP and MONTH(ThanhPham.Ngay) = 1 and YEAR(ThanhPham.Ngay) = 2007
