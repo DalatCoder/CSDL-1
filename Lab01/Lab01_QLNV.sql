@@ -45,13 +45,13 @@ INSERT INTO ChiNhanh(id, tenCN) VALUES(03, N'Bình Thạnh');
 SELECT * FROM ChiNhanh;
 
 SET DATEFORMAT dmy;
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (1, N'Lê Văn', 'Minh', '10/06/1960', '02/05/1986', 1);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (2, N'Nguyễn Thị', 'Mai', '20/04/1970', '04/07/2001', 1);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (3, N'Lê Anh', 'Tuấn', '25/06/1975', '01/09/1982', 2);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (4, N'Vương Tuấn', 'Vũ', '25/03/1960', '12/01/1986', 2);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (5, N'Lý Anh', 'Hân', '01/12/1980', '15/05/2004', 2);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (6, N'Phan Lê', 'Tuấn', '04/06/1976', '25/10/2002', 3);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (7, N'Lê Tuấn', 'Tú', '15/08/1975', '15/08/2000', 3);
+INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (1, N'Lê Văn', N'Minh', '10/06/1960', '02/05/1986', 1);
+INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (2, N'Nguyễn Thị', N'Mai', '20/04/1970', '04/07/2001', 1);
+INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (3, N'Lê Anh', N'Tuấn', '25/06/1975', '01/09/1982', 2);
+INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (4, N'Vương Tuấn', N'Vũ', '25/03/1960', '12/01/1986', 2);
+INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (5, N'Lý Anh', N'Hân', '01/12/1980', '15/05/2004', 2);
+INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (6, N'Phan Lê', N'Tuấn', '04/06/1976', '25/10/2002', 3);
+INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (7, N'Lê Tuấn', N'Tú', '15/08/1975', '15/08/2000', 3);
 SELECT * FROM NhanVien;
 
 INSERT INTO KyNang(id, tenKN) VALUES (1, N'Word');
@@ -79,5 +79,36 @@ INSERT INTO NV_KN(nhanVien_id, kyNang_id, mucDo) VALUES (7, 03, 4);
 INSERT INTO NV_KN(nhanVien_id, kyNang_id, mucDo) VALUES (7, 04, 3);
 SELECT * FROM NV_KN;
 
+EXEC sp_columns NhanVien;
 
+-- Q1: Hiển thị MSNV, HoTen (Ho + Ten as HoTen), số năm làm việc (SoNamLamViec).
+SELECT id, CONCAT(ho, ' ', ten) AS HoTen, YEAR(GETDATE()) - YEAR(ngayVaoLam) AS SoNamLamViec
+FROM NhanVien;
+
+-- Q2: Liệt kê các thông tin về nhân viên: HoTen, NgaySinh, NgayVaoLam, TenCN (sắp xếp theo tên chi nhánh).
+SELECT CONCAT(ho, ' ', ten) AS HoTen, ngaySinh, ngayVaoLam, tenCN
+FROM NhanVien
+JOIN ChiNhanh
+	ON ChiNhanh.id = NhanVien.chiNhanh_id
+ORDER BY tenCN ASC;
+
+-- Q3: Liệt kê các nhân viên (HoTen, TenKN, MucDo) của những nhân viên biết sử dụng ‘Word’.
+SELECT CONCAT(ho, ' ', ten) AS HoTen, tenKN, mucDo 
+FROM NhanVien
+JOIN NV_KN
+	ON NhanVien.id = NV_KN.nhanVien_id
+JOIN KyNang
+	ON KyNang.id = NV_KN.kyNang_id
+WHERE tenKN = N'word'
+ORDER BY mucDo DESC;
+
+-- Q4: Liệt kê các kỹ năng (TenKN, MucDo) mà nhân viên ‘Lê Anh Tuấn’ biết sử dụng.
+SELECT CONCAT(ho, ' ', ten) AS HoTen, tenKN, mucDo 
+FROM NhanVien
+JOIN NV_KN
+	ON NhanVien.id = NV_KN.nhanVien_id
+JOIN KyNang
+	ON KyNang.id = NV_KN.kyNang_id
+WHERE ho = N'Lê Anh' AND ten = N'Tuấn'
+ORDER BY mucDo DESC;
 
