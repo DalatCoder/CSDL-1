@@ -10,28 +10,38 @@ CREATE DATABASE Lab01_QuanLyNhanVien;
 
 USE Lab01_QuanLyNhanVien;
 
-
-CREATE TABLE ChiNhanh (id INT PRIMARY KEY,
-                                      tenCN NVARCHAR(100) UNIQUE);
-
+CREATE TABLE ChiNhanh
+  (
+     id    INT PRIMARY KEY,
+     tencn NVARCHAR(100) UNIQUE
+  );
 
 CREATE TABLE NhanVien
-  (id INT PRIMARY KEY,
-                  ho NVARCHAR(100),
-                     ten NVARCHAR(100),
-                         ngaySinh DATE, ngayVaoLam DATE, chiNhanh_id INT,
-   FOREIGN KEY (chiNhanh_id) REFERENCES chiNhanh(id) ON DELETE CASCADE);
+  (
+     id          INT PRIMARY KEY,
+     ho          NVARCHAR(100),
+     ten         NVARCHAR(100),
+     ngaysinh    DATE,
+     ngayvaolam  DATE,
+     chinhanh_id INT,
+     FOREIGN KEY (chinhanh_id) REFERENCES chinhanh(id) ON DELETE CASCADE
+  );
 
+CREATE TABLE KyNang
+  (
+     id    INT PRIMARY KEY,
+     tenkn NVARCHAR(100) UNIQUE
+  );
 
-CREATE TABLE KyNang (id INT PRIMARY KEY,
-                                    tenKN NVARCHAR(100) UNIQUE);
-
-
-CREATE TABLE NV_KN (id INT IDENTITY(1, 1) PRIMARY KEY,
-                                                  mucDo INT CHECK (mucDo >= 1
-                                                                   AND mucDo <= 9), nhanVien_id INT, kyNang_id INT,
-                    FOREIGN KEY (nhanVien_id) REFERENCES NhanVien(id),
-                    FOREIGN KEY (kyNang_id) REFERENCES KyNang(id));
+CREATE TABLE NV_KN
+  (
+     id          INT IDENTITY(1, 1) PRIMARY KEY,
+     mucdo       INT CHECK (mucdo >= 1 AND mucdo <= 9),
+     nhanvien_id INT,
+     kynang_id   INT,
+     FOREIGN KEY (nhanvien_id) REFERENCES nhanvien(id),
+     FOREIGN KEY (kynang_id) REFERENCES kynang(id)
+  ); 
 
 
 INSERT INTO ChiNhanh(id, tenCN)
