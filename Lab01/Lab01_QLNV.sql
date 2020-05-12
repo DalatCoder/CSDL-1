@@ -287,3 +287,81 @@ HAVING COUNT(NhanVien.id) -
    WHERE NhanVien.chiNhanh_id = ChiNhanh.id
      AND tenKN = N'Word' ) = 0;
 
+-- Q9: Với mỗi chi nhánh, hãy cho biết các thông tin sau TenCN, SoNV (số nhân viên của chi nhánh đó).
+SELECT tenCN,
+       COUNT(NhanVien.id) AS SoLuong
+FROM ChiNhanh
+JOIN NhanVien ON ChiNhanh.id = NhanVien.chiNhanh_id
+GROUP BY ChiNhanh.id,
+         tenCN;
+
+
+-- Q10: Với mỗi kỹ năng, hãy cho biết TenKN, SoNguoiDung (số nhân viên biết sử dụng kỹ năng đó).
+SELECT tenKN,
+       count(nhanVien_id) AS SoLuong
+FROM KyNang
+JOIN NV_KN ON KyNang.id = NV_KN.kyNang_id
+GROUP BY KyNang.id,
+         tenKN
+ORDER BY tenKN ASC;
+
+-- Q11: Cho biết TenKN có từ 3 nhân viên trong công ty sử dụng trở lên. 
+SELECT tenKN,
+       count(nhanVien_id) AS SoLuong
+FROM KyNang
+JOIN NV_KN ON KyNang.id = NV_KN.kyNang_id
+GROUP BY KyNang.id,
+         tenKN
+HAVING count(nhanVien_id) >= 3
+ORDER BY tenKN ASC;
+
+-- Q12: Cho biết TenCN có nhiều nhân viên nhất. 
+SELECT tenCN,
+       COUNT(NhanVien.id) AS SoLuong
+FROM ChiNhanh
+JOIN NhanVien ON ChiNhanh.id = NhanVien.chiNhanh_id
+GROUP BY ChiNhanh.id,
+         tenCN
+HAVING COUNT(NhanVien.id) >= ALL
+  (SELECT COUNT(NhanVien.id)
+   FROM ChiNhanh
+   JOIN NhanVien ON ChiNhanh.id = NhanVien.chiNhanh_id
+   GROUP BY ChiNhanh.id);
+
+-- Q13: Cho biết TenCN có ít nhân viên nhất. 
+SELECT tenCN,
+       COUNT(NhanVien.id) AS SoLuong
+FROM ChiNhanh
+JOIN NhanVien ON ChiNhanh.id = NhanVien.chiNhanh_id
+GROUP BY ChiNhanh.id,
+         tenCN
+HAVING COUNT(NhanVien.id) <= ALL
+  (SELECT COUNT(NhanVien.id)
+   FROM ChiNhanh
+   JOIN NhanVien ON ChiNhanh.id = NhanVien.chiNhanh_id
+   GROUP BY ChiNhanh.id);
+
+-- Q14: Với mỗi nhân viên, hãy cho biết số kỹ năng tin học mà nhân viên đó sử dụng được.
+SELECT CONCAT(ho, ' ', ten) AS HoTen,
+       COUNT(kyNang_id) AS SoLuongKyNang
+FROM NhanVien
+JOIN NV_KN ON NhanVien.id = NV_KN.nhanVien_id
+GROUP BY NhanVien.id,
+         ho,
+         ten
+ORDER BY SoLuongKyNang DESC;
+
+-- Q15: Cho biết HoTen, TenCN của nhân viên biết sử dụng nhiều kỹ năng nhất. 
+SELECT CONCAT(ho, ' ', ten) AS HoTen,
+       COUNT(kyNang_id) AS SoLuongKyNang
+FROM NhanVien
+JOIN NV_KN ON NhanVien.id = NV_KN.nhanVien_id
+GROUP BY NhanVien.id,
+         ho,
+         ten
+HAVING COUNT(kyNang_id) >= ALL
+  (SELECT COUNT(kyNang_id)
+   FROM NhanVien
+   JOIN NV_KN ON NhanVien.id = NV_KN.nhanVien_id
+   GROUP BY NhanVien.id)
+ORDER BY ten ASC;
