@@ -112,3 +112,48 @@ JOIN KyNang
 WHERE ho = N'Lê Anh' AND ten = N'Tuấn'
 ORDER BY mucDo DESC;
 
+-- TRUY VAN LONG
+-- Q5: Liệt kê MANV, HoTen, MSCN, TenCN của các nhân viên có mức độ thành thạo về ‘Excel’ cao nhất trong công ty .
+SELECT NhanVien.id AS MaNV, CONCAT(ho, ' ', ten) AS HoTen, ChiNhanh.id AS MaCN, tenCN
+FROM NhanVien
+JOIN ChiNhanh
+	ON ChiNhanh.id = NhanVien.chiNhanh_id
+JOIN NV_KN
+	ON NhanVien.id = NV_KN.nhanVien_id
+JOIN KyNang
+	ON KyNang.id = NV_KN.kyNang_id
+WHERE 
+	tenKN = N'Excel' AND
+	mucDo = (
+				SELECT MAX(mucDo)
+				FROM KyNang
+				JOIN NV_KN
+					ON KyNang.id = NV_KN.kyNang_id
+				WHERE tenKN = N'Excel'
+			)
+ORDER BY tenCN ASC;
+
+-- Q6: Liệt kê MANV, HoTen, TenCN của các nhân viên vừa biết ‘Word’ vừa biết ‘Excel’ (dùng truy vấn lồng).
+SELECT NhanVien.id AS MaNV, CONCAT(ho, ' ', ten) AS HoTen, ChiNhanh.id AS MaCN, tenCN
+FROM NhanVien
+JOIN ChiNhanh
+	ON ChiNhanh.id = NhanVien.chiNhanh_id
+JOIN NV_KN
+	ON NhanVien.id = NV_KN.nhanVien_id
+JOIN KyNang
+	ON KyNang.id = NV_KN.kyNang_id	
+WHERE 
+	tenKN = N'Word' AND
+	NhanVien.id IN (
+						SELECT nhanVien_id
+						FROM KyNang
+						JOIN NV_KN
+							ON KyNang.id = NV_KN.kyNang_id
+						WHERE tenKN = N'Excel'
+					)
+ORDER BY tenCN ASC;
+
+-- Q7: Với từng kỹ năng, hãy liệt kê các thông tin (MANV, HoTen, TenCN, TenKN, MucDo) của những nhân viên thành thạo kỹ năng đó nhất.
+
+
+-- Q8: Liệt kê các chi nhánh (MSCN, TenCN) mà mọi nhân viên trong chi nhánh đó đều biết ‘Word’.
