@@ -12,7 +12,7 @@ USE Lab01_QuanLyNhanVien;
 
 CREATE TABLE ChiNhanh (
 	id INT PRIMARY KEY,
-	tenCN NVARCHAR(100)
+	tenCN NVARCHAR(100) UNIQUE
 );
 
 CREATE TABLE NhanVien (
@@ -27,12 +27,12 @@ CREATE TABLE NhanVien (
 
 CREATE TABLE KyNang (
 	id INT PRIMARY KEY,
-	tenKN NVARCHAR(100)
+	tenKN NVARCHAR(100) UNIQUE
 );
 
 CREATE TABLE NV_KN (
 	id INT IDENTITY(1,1) PRIMARY KEY,
-	mucDo INT,
+	mucDo INT CHECK (mucDo >= 1 AND mucDo <= 9),
 	nhanVien_id INT,
 	kyNang_id INT,
 	FOREIGN KEY (nhanVien_id) REFERENCES NhanVien(id),
@@ -45,20 +45,6 @@ INSERT INTO ChiNhanh(id, tenCN) VALUES(03, N'Bình Thạnh');
 SELECT * FROM ChiNhanh;
 
 SET DATEFORMAT dmy;
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (1, N'Lê Văn', 'Minh', '10/06/1960', '02/05/1986', 1);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (2, N'Nguyễn Thị', 'Mai', '20/04/1970', '04/07/2001', 1);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (3, N'Lê Anh', 'Tuấn', '25/06/1975', '01/09/1982', 2);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (4, N'Vương Tuấn', 'Vũ', '25/03/1960', '12/01/1986', 2);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (5, N'Lý Anh', 'Hân', '01/12/1980', '15/05/2004', 2);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (6, N'Phan Lê', 'Tuấn', '04/06/1976', '25/10/2002', 3);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (7, N'Lê Tuấn', 'Tú', '15/08/1975', '15/08/2000', 3);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (1, N'Lê Văn', 'Minh', '10/06/1960', '02/05/1986', 1);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (2, N'Nguyễn Thị', 'Mai', '20/04/1970', '04/07/2001', 1);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (3, N'Lê Anh', 'Tuấn', '25/06/1975', '01/09/1982', 2);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (4, N'Vương Tuấn', 'Vũ', '25/03/1960', '12/01/1986', 2);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (5, N'Lý Anh', 'Hân', '01/12/1980', '15/05/2004', 2);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (6, N'Phan Lê', 'Tuấn', '04/06/1976', '25/10/2002', 3);
-INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (7, N'Lê Tuấn', 'Tú', '15/08/1975', '15/08/2000', 3);
 INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (1, N'Lê Văn', 'Minh', '10/06/1960', '02/05/1986', 1);
 INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (2, N'Nguyễn Thị', 'Mai', '20/04/1970', '04/07/2001', 1);
 INSERT INTO NhanVien(id, ho, ten, ngaySinh, ngayVaoLam, chiNhanh_id) VALUES (3, N'Lê Anh', 'Tuấn', '25/06/1975', '01/09/1982', 2);
@@ -92,5 +78,6 @@ INSERT INTO NV_KN(nhanVien_id, kyNang_id, mucDo) VALUES (6, 03, 2);
 INSERT INTO NV_KN(nhanVien_id, kyNang_id, mucDo) VALUES (7, 03, 4);
 INSERT INTO NV_KN(nhanVien_id, kyNang_id, mucDo) VALUES (7, 04, 3);
 SELECT * FROM NV_KN;
+
 
 
