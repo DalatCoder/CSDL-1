@@ -12,13 +12,13 @@ USE Lab01_QuanLyNhanVien;
 
 CREATE TABLE ChiNhanh (
 	id INT PRIMARY KEY,
-	tenCN VARCHAR(100)
+	tenCN NVARCHAR(100)
 );
 
 CREATE TABLE NhanVien (
 	id INT PRIMARY KEY,
-	ho VARCHAR(100),
-	ten VARCHAR(100),
+	ho NVARCHAR(100),
+	ten NVARCHAR(100),
 	ngaySinh DATE,
 	ngayVaoLam DATE,
 	chiNhanh_id INT,
@@ -27,7 +27,7 @@ CREATE TABLE NhanVien (
 
 CREATE TABLE KyNang (
 	id INT PRIMARY KEY,
-	tenKN VARCHAR(100)
+	tenKN NVARCHAR(100)
 );
 
 CREATE TABLE NV_KN (
@@ -38,4 +38,3 @@ CREATE TABLE NV_KN (
 	FOREIGN KEY (nhanVien_id) REFERENCES NhanVien(id),
 	FOREIGN KEY (kyNang_id) REFERENCES KyNang(id)
 );
-
