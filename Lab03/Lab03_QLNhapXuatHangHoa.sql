@@ -129,3 +129,239 @@ INSERT INTO CT_HoaDon(hoaDon_id, hangHoa_id, donGia, soLuong) VALUES ('X0002', '
 INSERT INTO CT_HoaDon(hoaDon_id, hangHoa_id, donGia, soLuong) VALUES ('X0003', 'CPU01', 67, 1);
 INSERT INTO CT_HoaDon(hoaDon_id, hangHoa_id, donGia, soLuong) VALUES ('X0003', 'MNT03', 115, 2);
 SELECT * FROM CT_HoaDon;
+
+-- 1) Liệt kê các mặt hàng thuộc loại đĩa cứng.
+SELECT *
+FROM HangHoa
+WHERE id LIKE 'HDD%';
+
+-- 2) Liệt kê các mặt hàng có số lượng tồn trên 10.
+SELECT *
+FROM HangHoa
+WHERE soLuongTon > 10;
+
+-- 3) Cho biết thông tin về các nhà cung cấp ở Thành phố Hồ Chí Minh
+SELECT *
+FROM DoiTac
+WHERE diaChi LIKE '%HCM%';
+
+-- 4) Liệt kê các hóa đơn nhập hàng trong tháng 5/2006, thông tin hiển thị gồm: 
+-- sohd; ngaylaphd; tên, địa chỉ, và điện thoại của nhà cung cấp; số mặt hàng
+SELECT HoaDon.id AS SoHD, ngayLap, DoiTac.ten, DoiTac.diaChi, DoiTac.dienThoai, soLuong
+FROM HoaDon
+JOIN DoiTac ON HoaDon.doiTac_id = DoiTac.id
+JOIN CT_HoaDon ON CT_HoaDon.hoaDon_id = HoaDon.id
+WHERE HoaDon.id LIKE 'N%' AND MONTH(ngayLap) = 5 AND YEAR(ngayLap) = 2006;
+
+-- 5) Cho biết tên các nhà cung cấp có cung cấp đĩa cứng.
+SELECT hangHoa_id AS MaHH, DoiTac.ten, DoiTac.diaChi, DoiTac.dienThoai
+FROM KhaNang_CC
+JOIN DoiTac ON KhaNang_CC.doiTac_id = DoiTac.id
+WHERE hangHoa_id LIKE 'HDD%';
+
+-- 6) Cho biết tên các nhà cung cấp có thể cung cấp tất cả các loại đĩa cứng.
+SELECT DoiTac.ten,
+       DoiTac.diaChi,
+       DoiTac.dienThoai,
+       COUNT(*) AS SoLoaiDiaCung
+FROM KhaNang_CC
+JOIN DoiTac ON KhaNang_CC.doiTac_id = DoiTac.id
+WHERE hangHoa_id LIKE 'HDD%'
+GROUP BY DoiTac.id,
+         ten,
+         diaChi,
+         dienThoai
+HAVING COUNT(*) =
+  (SELECT COUNT(*)
+   FROM HangHoa
+   WHERE id LIKE 'HDD%');
+
+-- 7) Cho biết tên nhà cung cấp không cung cấp đĩa cứng.
+SELECT DISTINCT DoiTac.ten,
+       DoiTac.diaChi,
+       DoiTac.dienThoai
+FROM KhaNang_CC
+JOIN DoiTac ON KhaNang_CC.doiTac_id = DoiTac.id
+AND DoiTac.id NOT IN
+  (SELECT doiTac_id
+   FROM KhaNang_CC
+   WHERE hangHoa_id LIKE 'HDD%');
+
+-- 8) Cho biết thông tin của mặt chưa bán được.
+SELECT *
+FROM HangHoa
+WHERE HangHoa.id NOT IN
+    (SELECT DISTINCT hangHoa_id
+     FROM HoaDon
+     JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+     WHERE HoaDon.id LIKE 'X%');
+
+-- 9) Cho biết tên và tổng số lượng bán của mặt hàng bán chạy nhất (tính theo số lượng).
+SELECT HangHoa.id AS MaHH,
+       HangHoa.ten,
+       SUM(soLuong) AS SoLuongBan
+FROM HoaDon
+JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+JOIN HangHoa ON CT_HoaDon.hangHoa_id = HangHoa.id
+WHERE HoaDon.id LIKE 'X%'
+GROUP BY HangHoa.id,
+         HangHoa.ten
+HAVING SUM(soLuong) >= ALL
+  (SELECT SUM(soLuong)
+   FROM HoaDon
+   JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+   WHERE HoaDon.id LIKE 'X%'
+   GROUP BY CT_HoaDon.hangHoa_id);
+
+-- 10) Cho biết tên và tổng số lượng của mặt hàng nhập về ít nhất.
+SELECT HangHoa.id AS MaHH,
+       HangHoa.ten,
+       SUM(soLuong) AS SoLuongNhap
+FROM CT_HoaDon
+JOIN HangHoa ON CT_HoaDon.hangHoa_id = HangHoa.id
+WHERE hoaDon_id LIKE 'N%'
+GROUP BY HangHoa.id,
+         HangHoa.ten
+HAVING SUM(soLuong) <= ALL
+  (SELECT SUM(soLuong)
+   FROM CT_HoaDon
+   WHERE hoaDon_id LIKE 'N%'
+   GROUP BY hangHoa_id);
+
+-- 11) Cho biết hóa đơn nhập nhiều mặt hàng nhất.
+SELECT HoaDon.id AS MaHD,
+       ngayLap,
+       DoiTac.ten,
+       COUNT(*) AS SoLuongMatHang
+FROM HoaDon
+JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+JOIN DoiTac ON HoaDon.doiTac_id = DoiTac.id
+WHERE HoaDon.id LIKE 'N%'
+GROUP BY HoaDon.id,
+         ngayLap,
+         DoiTac.ten
+HAVING COUNT(*) >= ALL
+  (SELECT COUNT(*)
+   FROM HoaDon
+   JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+   WHERE HoaDon.id LIKE 'N%'
+   GROUP BY HoaDon.id);
+
+-- 12) Cho biết các mặt hàng không được nhập hàng trong tháng 1/2006
+SELECT id AS MaHH,
+       ten,
+       dvt,
+       soLuongTon
+FROM HangHoa
+WHERE id NOT IN
+    (SELECT DISTINCT hangHoa_id
+     FROM HoaDon
+     JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+     WHERE HoaDon.id LIKE 'N%'
+       AND MONTH(ngayLap) = 1
+       AND YEAR(ngayLap) = 2006 );
+
+-- 13) Cho biết tên các mặt hàng không bán được trong tháng 6/2006
+SELECT id AS MaHH,
+       ten,
+       dvt,
+       soLuongTon
+FROM HangHoa
+WHERE id NOT IN
+    (SELECT DISTINCT hangHoa_id
+     FROM HoaDon
+     JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+     WHERE HoaDon.id LIKE 'X%'
+       AND MONTH(ngayLap) = 6
+       AND YEAR(ngayLap) = 2006);
+
+-- 14) Cho biết cửa hàng bán bao nhiêu mặt hàng
+SELECT COUNT(*) AS SoLuongMatHang FROM HangHoa;
+
+-- 15) Cho biết số mặt hàng mà từng nhà cung cấp có khả năng cung cấp.
+SELECT DoiTac.id AS MaDT,
+       DoiTac.ten,
+       DoiTac.diaChi,
+       DoiTac.dienThoai,
+       COUNT(*) AS SoLuongMatHang
+FROM KhaNang_CC
+JOIN DoiTac ON KhaNang_CC.doiTac_id = DoiTac.id
+GROUP BY DoiTac.id,
+         DoiTac.ten,
+         DoiTac.diaChi,
+         DoiTac.dienThoai
+ORDER BY SoLuongMatHang DESC;
+
+-- 16) Cho biết thông tin của khách hàng có giao dịch với của hàng nhiều nhất.
+SELECT DoiTac.id AS MaDT,
+       DoiTac.ten,
+       DoiTac.diaChi,
+       DoiTac.dienThoai,
+       COUNT(*) AS SoLanGiaoDich
+FROM HoaDon
+JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+JOIN DoiTac ON HoaDon.doiTac_id = DoiTac.id
+WHERE HoaDon.doiTac_id LIKE 'K%'
+GROUP BY DoiTac.id,
+         DoiTac.ten,
+         DoiTac.diaChi,
+         DoiTac.dienThoai
+HAVING COUNT(*) >= ALL
+  (SELECT COUNT(*)
+   FROM HoaDon
+   JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+   WHERE HoaDon.doiTac_id LIKE 'K%'
+   GROUP BY doiTac_id);
+
+-- 17) Tính tổng doanh thu năm 2006.
+SELECT SUM(donGia * soLuong) AS TongDoanhThu
+FROM HoaDon
+JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+WHERE HoaDon.id LIKE 'X%' AND YEAR(ngayLap) = 2006;
+
+-- 18) Cho biết loại mặt hàng bán chạy nhất.
+SELECT HangHoa.id AS MaHH,
+       HangHoa.ten,
+       SUM(soLuong) AS SoLuongBan
+FROM HoaDon
+JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+JOIN HangHoa ON CT_HoaDon.hangHoa_id = HangHoa.id
+WHERE HoaDon.id LIKE 'X%'
+GROUP BY HangHoa.id,
+         HangHoa.ten
+HAVING SUM(soLuong) >= ALL
+  (SELECT SUM(soLuong)
+   FROM HoaDon
+   JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+   WHERE HoaDon.id LIKE 'X%'
+   GROUP BY CT_HoaDon.hangHoa_id);
+
+-- 19) Liệt kê thông tin bán hàng của tháng 5/2006 bao gồm: 
+-- mahh, tenhh, dvt, tổng số lượng, tổng thành tiền.
+SELECT HangHoa.id AS MaHH, HangHoa.ten AS TenHH, dvt, SUM(CT_HoaDon.soLuong) AS TongSoLuong, SUM(donGia * soLuong) AS TongThanhTien 
+FROM HoaDon
+JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+JOIN HangHoa ON CT_HoaDon.hangHoa_id = HangHoa.id
+WHERE MONTH(ngayLap) = 5 AND YEAR(ngayLap) = 2006
+GROUP BY HangHoa.id, HangHoa.ten, dvt
+ORDER BY TongSoLuong DESC;
+
+-- 20) Liệt kê thông tin của mặt hàng có nhiều người mua nhất.
+SELECT HangHoa.id AS MaHH,
+       HangHoa.ten,
+       SUM(soLuong) AS SoLuongBan
+FROM HoaDon
+JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+JOIN HangHoa ON CT_HoaDon.hangHoa_id = HangHoa.id
+WHERE HoaDon.id LIKE 'X%'
+GROUP BY HangHoa.id,
+         HangHoa.ten
+HAVING SUM(soLuong) >= ALL
+  (SELECT SUM(soLuong)
+   FROM HoaDon
+   JOIN CT_HoaDon ON HoaDon.id = CT_HoaDon.hoaDon_id
+   WHERE HoaDon.id LIKE 'X%'
+   GROUP BY CT_HoaDon.hangHoa_id);
+
+-- 21) Tính và cập nhật tổng trị giá của các hóa đơn.
+
