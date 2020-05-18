@@ -152,3 +152,176 @@ INSERT INTO BangDiem(sinhVien_id, monHoc_id, lanThi, diem) VALUES ('99QT002', 'Q
 INSERT INTO BangDiem(sinhVien_id, monHoc_id, lanThi, diem) VALUES ('99QT002', 'QA02', 1, 9);
 SELECT * FROM BangDiem;
 
+-- 1) Liệt kê MSSV, Họ, Tên, Địa chỉ của tất cả các sinh viên
+SELECT id AS MSSV, CONCAT(ho, ' ', ten) AS HoTen, diaChi
+FROM SinhVien;
+
+-- 2) Liệt kê MSSV, Họ, Tên, MS Tỉnh của tất cả các sinh viên. 
+-- Sắp xếp kết quả theo MS tỉnh, trong cùng tỉnh sắp xếp theo họ tên của sinh viên.
+SELECT id AS MSSV, CONCAT(ho, ' ', ten) AS HoTen, diaChi, tinh_id AS MS_Tinh
+FROM SinhVien
+ORDER BY MS_Tinh, ten, ho ASC;
+
+-- 3) Liệt kê các sinh viên nữ của tỉnh Long An
+SELECT *
+FROM SinhVien
+JOIN Tinh ON SinhVien.tinh_id = Tinh.id
+WHERE phai = 'No' AND Tinh.ten = 'Long An';
+
+-- 4) Liệt kê các sinh viên có sinh nhật trong tháng giêng.
+SELECT *
+FROM SinhVien
+WHERE MONTH(ngaySinh) = 1;
+
+-- 5) Liệt kê các sinh viên có sinh nhật nhằm ngày 1/1.
+SELECT *
+FROM SinhVien
+WHERE MONTH(ngaySinh) = 1 AND DAY(ngaySinh) = 1;
+
+-- 6) Liệt kê các sinh viên có số điện thoại.
+SELECT *
+FROM SinhVien
+WHERE dienThoai IS NOT NULL;
+
+-- 7) Liệt kê các sinh viên có số điện thoại di động.
+SELECT *
+FROM SinhVien
+WHERE DATALENGTH(dienThoai) = 10;
+
+-- 8) Liệt kê các sinh viên tên ‘Minh’ học lớp ’99TH’
+SELECT *
+FROM SinhVien
+WHERE ten = 'Minh' AND lop_id = '99TH';
+
+-- 9) Liệt kê các sinh viên có địa chỉ ở đường ‘Tran Hung Dao’
+SELECT *
+FROM SinhVien
+WHERE diaChi LIKE '%Tran Hung Dao%';
+
+-- 10) Liệt kê các sinh viên có tên lót chữ ‘Van’ (không liệt kê người họ ‘Van’)
+SELECT *
+FROM SinhVien
+WHERE ho LIKE '% Van%';
+
+-- 11) Liệt kê MSSV, Họ Ten (ghép họ và tên thành một cột), Tuổi của các sinh viên ở tỉnh Long An.
+SELECT SinhVien.id AS MSSV,
+       CONCAT(ho, ' ', SinhVien.ten) AS HoTen,
+       YEAR(GETDATE()) - YEAR(ngaySinh) AS Tuoi,
+       tinh.ten AS Tinh
+FROM SinhVien
+JOIN Tinh ON SinhVien.tinh_id = Tinh.id
+WHERE Tinh.ten = 'Long An';
+
+-- 12) Liệt kê các sinh viên nam từ 23 đến 28 tuổi.
+SELECT SinhVien.id AS MSSV,
+       CONCAT(ho, ' ', SinhVien.ten) AS HoTen,
+       YEAR(GETDATE()) - YEAR(ngaySinh) AS Tuoi
+FROM SinhVien
+WHERE phai = 'Yes'
+  AND YEAR(GETDATE()) - YEAR(ngaySinh) BETWEEN 23 AND 28;
+
+-- 13) Liệt kê các sinh viên nam từ 32 tuổi trở lên và các sinh viên nữ từ 27 tuổi trở lên.
+SELECT SinhVien.id AS MSSV,
+       CONCAT(ho, ' ', SinhVien.ten) AS HoTen,
+       YEAR(GETDATE()) - YEAR(ngaySinh) AS Tuoi
+FROM SinhVien
+WHERE (phai = 'Yes'
+       AND YEAR(GETDATE()) - YEAR(ngaySinh) >= 32)
+  OR (phai = 'No'
+      AND YEAR(GETDATE()) - YEAR(ngaySinh) >= 27);
+
+-- 14) Liệt kê các sinh viên khi nhập học còn dưới 18 tuổi, hoặc đã trên 25 tuổi.
+SELECT SinhVien.id AS MSSV,
+       CONCAT(ho, ' ', SinhVien.ten) AS HoTen,
+       YEAR(GETDATE()) - YEAR(ngaySinh) AS Tuoi
+FROM SinhVien
+WHERE (YEAR(ngayNhapHoc) - YEAR(ngaySinh) < 18)
+  OR (YEAR(ngayNhapHoc) - YEAR(ngaySinh) > 25);
+
+-- 15) Liệt kê danh sách các sinh viên của khóa 99 (MSSV có 2 ký tự đầu là ‘99’).
+SELECT *
+FROM SinhVien
+WHERE id LIKE '99%';
+
+-- 16) Liệt kê MSSV, Điểm thi lần 1 môn ‘Co so du lieu’ của lớp ’99TH’
+SELECT SinhVien.id AS MSSV,
+       diem,
+       lanThi,
+       MonHoc.ten
+FROM SinhVien
+JOIN BangDiem ON SinhVien.id = BangDiem.sinhVien_id
+JOIN MonHoc ON MonHoc.id = BangDiem.monHoc_id
+WHERE lanThi = 1
+  AND MonHoc.ten = 'Co so du lieu'
+  AND SinhVien.lop_id = '99TH'
+
+-- 17) Liệt kê MSSV, Họ tên của các sinh viên lớp ’99TH’ thi không đạt lần 1 môn ‘Co so du lieu’
+SELECT SinhVien.id AS MSSV,
+       diem,
+       lanThi,
+       MonHoc.ten
+FROM SinhVien
+JOIN BangDiem ON SinhVien.id = BangDiem.sinhVien_id
+JOIN MonHoc ON MonHoc.id = BangDiem.monHoc_id
+WHERE lanThi = 1
+  AND MonHoc.ten = 'Co so du lieu'
+  AND SinhVien.lop_id = '99TH'
+  AND diem < 4
+
+-- 18) Liệt kê tất cả các điểm thi của sinh viên có mã số ’99TH001’ theo mẫu sau:
+SELECT MonHoc.id AS MSMH, MonHoc.ten AS N'Tên MH', lanThi AS N'Lần thi', diem AS N'Điểm'
+FROM SinhVien
+JOIN BangDiem ON SinhVien.id = BangDiem.sinhVien_id
+JOIN MonHoc ON MonHoc.id = BangDiem.monHoc_id
+WHERE SinhVien.id = '99TH001';
+
+-- 19) Liệt kê MSSV, họ tên, MSLop của các sinh viên có điểm thi lần 1 môn 
+-- ‘Co so du lieu’ từ 8 điểm trở lên
+SELECT SinhVien.id AS MSSV,
+       CONCAT(ho, ' ', SinhVien.ten) AS HoTen,
+       SinhVien.lop_id AS MSKLop
+FROM SinhVien
+JOIN BangDiem ON SinhVien.id = BangDiem.sinhVien_id
+JOIN MonHoc ON MonHoc.id = BangDiem.monHoc_id
+WHERE lanThi = 1
+  AND MonHoc.ten = 'Co so du lieu'
+  AND diem >= 8
+
+
+-- 20) Liệt kê các tỉnh không có sinh viên theo học
+SELECT *
+FROM Tinh
+WHERE id NOT IN
+    (SELECT DISTINCT tinh_id
+     FROM SinhVien);
+
+-- 21) Liệt kê các sinh viên hiện chưa có điểm môn thi nào.
+SELECT *
+FROM SinhVien
+WHERE id NOT IN
+    (SELECT DISTINCT sinhVien_id
+     FROM BangDiem);
+
+-- 22) Thống kê số lượng sinh viên ở mỗi lớp theo mẫu sau: MSLop, TenLop, SoLuongSV
+SELECT Lop.id, Lop.ten, COUNT(*) AS SoLuongSV
+FROM SinhVien
+JOIN Lop ON Lop.id = SinhVien.lop_id
+GROUP BY Lop.id, Lop.ten
+ORDER BY SoLuongSV;
+
+-- 23) Thống kê số lượng sinh viên ở mỗi tỉnh theo mẫu sau:
+SELECT Tinh.id, Tinh.ten, phai as PhaiNu, COUNT(*) as SoLuong
+FROM SinhVien
+JOIN Tinh ON Tinh.id = SinhVien.tinh_id
+where phai = 'No'
+--ORDER BY Tinh.id
+GROUP BY Tinh.id, Tinh.ten, phai
+union all
+SELECT Tinh.id,Tinh.ten,  phai as PhaiNam, COUNT(*) as SoLuong
+FROM SinhVien
+JOIN Tinh ON Tinh.id = SinhVien.tinh_id
+where phai = 'Yes'
+--ORDER BY Tinh.id
+GROUP BY Tinh.id,Tinh.ten, phai;
+
+
