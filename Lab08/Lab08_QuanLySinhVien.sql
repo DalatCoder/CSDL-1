@@ -359,22 +359,14 @@ GROUP BY lop.id,
 
 -- 25) Lọc ra điểm cao nhất trong các lần thi cho các sinh viên theo mẫu sau (điểm in ra của
 -- mỗi môn là điểm cao nhất trong các lần thi của môn đó):
-SELECT
-    A.lanthi,
-    A.sinhvien_id AS 'MSSV',
+SELECT sinhvien_id AS 'MSSV',
     monhoc.id AS 'MSMH',
     monhoc.ten AS N'Tên MH ',
     monhoc.heso AS N'Hệ số',
-    A.diem AS N'Điểm',
-    A.diem * monhoc.heso AS 'KetQua'
-FROM bangdiem A
-JOIN monhoc
-    ON monhoc.id = A.monhoc_id
-WHERE diem = (SELECT
-    MAX(diem)
-FROM bangdiem
-WHERE lanthi = A.lanthi)
-ORDER BY A.lanThi ASC;
+	MAX(diem) AS DIEM
+FROM BangDiem
+JOIN MonHoc ON MonHoc.id = BangDiem.monHoc_id
+GROUP BY sinhVien_id, MonHoc.id, MonHoc.ten, MonHoc.heSo;
 
 -- 26) Lập bảng tổng kết theo mẫu
 SELECT SinhVien.id AS 'MSSV',
