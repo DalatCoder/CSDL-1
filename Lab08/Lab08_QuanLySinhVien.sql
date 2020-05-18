@@ -390,11 +390,7 @@ GROUP BY Lop.nienKhoa, Khoa.id, Khoa.ten;
 CREATE PROC usp_Get_Student_Grades 
   @id CHAR(7) 
 AS 
-  IF NOT EXISTS 
-  ( 
-         SELECT * 
-         FROM   bangdiem 
-         WHERE  sinhvien_id = @id) 
+  IF NOT EXISTS(SELECT * FROM bangdiem WHERE sinhvien_id = @id) 
 	PRINT N'Sinh viên có mã số ' + @id + N' không tồn tại trong CSDL!' 
   ELSE 
 	  BEGIN 
@@ -414,4 +410,32 @@ EXEC usp_Get_Student_Grades '98TH001';
 EXEC usp_Get_Student_Grades '98TH002';
 EXEC usp_Get_Student_Grades '98TH003';
 
+-- 29) Nhập vào MSSV, in ra bảng tổng kết của lớp đó, theo mẫu sau:
+CREATE PROC usp_Get_Student_Summary
+	@id CHAR(7)
+AS
+  IF NOT EXISTS(SELECT * FROM bangdiem WHERE sinhvien_id = @id) 
+	PRINT N'Sinh viên có mã số ' + @id + N' không tồn tại trong CSDL!' 
+  ELSE
+	BEGIN
+		SELECT SinhVien.id AS 'MSSV', 
+		SinhVien.ho AS N'Họ', 
+		SinhVien.ten AS N'Tên', 
+		ROUND(SUM(diem * heSo) / SUM(heSo), 1) AS N'ĐTB',
+		CASE
+			WHEN SUM(diem * heSo) / SUM(heSo) >= 8.0 THEN N'Giỏi'
+			WHEN SUM(diem * heSo) / SUM(heSo) >= 6.5 THEN N'Khá'
+			WHEN SUM(diem * heSo) / SUM(heSo) >= 5.0 THEN N'TB'
+			ELSE N'Yếu'
+		END AS N'Xếp loại'
+		FROM BangDiem
+		JOIN SinhVien ON BangDiem.sinhVien_id = SinhVien.id
+		JOIN MonHoc ON BangDiem.monHoc_id = MonHoc.id
+		WHERE SinhVien.id = @id
+		GROUP BY SinhVien.id, SinhVien.ho, SinhVien.ten
+	END;
+
+EXEC usp_Get_Student_Summary '98TH001';
+EXEC usp_Get_Student_Summary '98TH002';
+EXEC usp_Get_Student_Summary '98TH003';
 
