@@ -439,3 +439,52 @@ EXEC usp_Get_Student_Summary '98TH001';
 EXEC usp_Get_Student_Summary '98TH002';
 EXEC usp_Get_Student_Summary '98TH003';
 
+
+-- 30) Tạo bảng SinhVienTinh trong đó chứa hồ sơ của các sinh viên 
+-- (lấy từ table SinhVien) có quê quán không phải ở TPHCM. 
+-- Thêm thuộc tính HBONG (học bổng) cho table SinhVienTinh.
+
+CREATE TABLE SinhVienTinh
+(
+	id CHAR(7) PRIMARY KEY,
+	ho VARCHAR(50),
+	ten VARCHAR(30),
+	ngaySinh DATE,
+	tinh_id CHAR(2) REFERENCES Tinh(id) ON DELETE CASCADE,
+	ngayNhapHoc DATE,
+	lop_id CHAR(4) REFERENCES Lop(id),
+	phai VARCHAR(5),
+	diaChi VARCHAR(100),
+	dienThoai VARCHAR(13),
+	hocBong INT
+);
+
+SET DATEFORMAT dmy;
+INSERT INTO SinhVienTinh(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
+VALUES 
+	('98TH001', 'Nguyen Van', 'An', '06/08/80', '01', '03/09/98', '98TH', 'Yes', '12 Tran Hung Dao, Q.1', '8234512'),
+	('98TH002', 'Le Thi', 'An', '17/10/79', '01', '03/09/98', '98TH', 'No', '23 CMT8, Q. Tan Binh', '0303234342'),
+	('99TH001', 'Ly Van Hung', 'Dung', '27/09/81', '03', '05/10/99', '99TH', 'Yes', '178 CMT8, Q. Tan Binh', '7563213'),
+	('99TH002', 'Van Minh', 'Hoang', '01/01/81', '04', '05/10/99', '99TH', 'Yes', '272 Ly Thuong Kiet, Q.10', '8341234'),
+	('99TH003', 'Nguyen', 'Tuan', '12/01/80', '03', '05/10/99', '99TH', 'Yes', '162 Tran Hung Dao, Q.5', NULL),
+	('99TH004', 'Tran Van', 'Minh', '25/06/81', '04', '05/10/99', '99TH', 'Yes', '147 Dien Bien Phu, Q.3', '7236754'),
+	('99TH005', 'Nguyen Thai', 'Minh', '01/01/80', '04', '05/10/99', '99TH', 'Yes', '345 Le Dai Hanh, Q.11', NULL),
+	('99VT001', 'Le Ngoc', 'Mai', '21/06/82', '01', '05/10/99', '99VT', 'No', '129 Tran Hung Dao, Q.1', '0903124534'),
+	('99QT001', 'Nguyen Thi', 'Oanh', '19/08/73', '04', '05/10/99', '99QT', 'No', '76 Hung Vuong, Q.5', '0901656324'),
+	('99QT002', 'Le My', 'Hanh', '20/05/76', '04', '05/10/99', '99QT', 'No', '12 Pham Ngoc Thach, Q.3', NULL);
+
+	-- 31) Cập nhật thuộc tính HBONG trong table SinhVienThanh 10000 cho tất cả các sinh viên.
+	UPDATE SinhVienTinh
+	SET hocBong = 10000;
+	SELECT * FROM SinhVienTinh;
+
+	-- 32) Tăng HBONG lên 10% cho các sinh viên nữ.
+	UPDATE SinhVienTinh
+	SET hocBong = hocBong * 1.1
+	WHERE phai = 'No';
+	SELECT * FROM SinhVienTinh ORDER BY phai;
+
+	-- 33) Xóa tất cả các sinh viên có quê quán ở Long An ra khỏi table SinhVienTinh.
+	DELETE FROM SinhVienTinh WHERE tinh_id = (SELECT id FROM Tinh WHERE ten = 'Long An');
+	SELECT * FROM SinhVienTinh;
+
