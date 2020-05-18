@@ -328,16 +328,34 @@ GROUP  BY tinh.id,
           tinh.ten 
 
 -- 24) Thống kê kết quả thi lần 1 môn ‘Co so du lieu’ ở các lớp, theo mẫu sau
- SELECT Lop.id AS MaLop, Lop.ten AS TenLop,
- (
-	SELECT COUNT(*)
-	FROM
-	WHERE diem > 4
- ) AS N'Số SV đạt'
- FROM BangDiem
- JOIN MonHoc ON BangDiem.monHoc_id = MonHoc.id
- JOIN SinhVien ON BangDiem.sinhVien_id = SinhVien.id
- JOIN Lop ON SinhVien.lop_id = Lop.id
- WHERE lanThi = 1 AND MonHoc.ten = 'Co so du lieu'
- GROUP BY Lop.id, Lop.ten
+SELECT lop.id, 
+       lop.ten, 
+       Count(CASE 
+               WHEN diem >= 4 THEN 1 
+               ELSE NULL 
+             END)                      AS N'Số SV đạt', 
+       ( Count(CASE 
+                 WHEN diem >= 4 THEN 1 
+                 ELSE NULL 
+               END) * 100 / Count(*) ) AS N'Tỉ lệ đạt (%)', 
+       Count(CASE 
+               WHEN diem < 4 THEN 1 
+               ELSE NULL 
+             END)                      AS N'Số SV không đạt', 
+       ( Count(CASE 
+                 WHEN diem < 4 THEN 1 
+                 ELSE NULL 
+               END) * 100 / Count(*) ) AS N'Tỉ lệ không đạt (%)', 
+       Count(*)                        AS TongSo 
+FROM   bangdiem 
+       JOIN monhoc 
+         ON bangdiem.monhoc_id = monhoc.id 
+       JOIN sinhvien 
+         ON sinhvien.id = bangdiem.sinhvien_id 
+       JOIN lop 
+         ON sinhvien.lop_id = lop.id 
+WHERE  lanthi = 1 
+       AND monhoc.ten = 'Co so du lieu' 
+GROUP  BY lop.id, 
+          lop.ten; 
 
