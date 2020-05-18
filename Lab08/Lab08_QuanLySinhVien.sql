@@ -387,3 +387,12 @@ GROUP BY SinhVien.id,
          SinhVien.ho,
          SinhVien.ten;
 
+-- 27) Thống kê số lượng sinh viên tỉnh ‘Long An’ đang theo học ở các khoa, theo mẫu sau:
+SELECT Lop.nienKhoa AS N'Năm học', Khoa.id AS 'MSKhoa', Khoa.ten AS 'TenKhoa', COUNT(*) AS N'Số lượng SV'
+FROM SinhVien
+JOIN Tinh ON SinhVien.tinh_id = Tinh.id
+JOIN Lop ON SinhVien.lop_id = Lop.id
+JOIN Khoa ON Lop.khoa_id = Khoa.id
+WHERE Tinh.ten = 'Long An'
+GROUP BY Lop.nienKhoa, Khoa.id, Khoa.ten;
+
