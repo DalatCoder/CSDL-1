@@ -310,18 +310,34 @@ GROUP BY Lop.id, Lop.ten
 ORDER BY SoLuongSV;
 
 -- 23) Thống kê số lượng sinh viên ở mỗi tỉnh theo mẫu sau:
-SELECT Tinh.id, Tinh.ten, phai as PhaiNu, COUNT(*) as SoLuong
-FROM SinhVien
-JOIN Tinh ON Tinh.id = SinhVien.tinh_id
-where phai = 'No'
---ORDER BY Tinh.id
-GROUP BY Tinh.id, Tinh.ten, phai
-union all
-SELECT Tinh.id,Tinh.ten,  phai as PhaiNam, COUNT(*) as SoLuong
-FROM SinhVien
-JOIN Tinh ON Tinh.id = SinhVien.tinh_id
-where phai = 'Yes'
---ORDER BY Tinh.id
-GROUP BY Tinh.id,Tinh.ten, phai;
+SELECT tinh.id    AS MaTinh, 
+       tinh.ten   AS TenTinh, 
+       Count(CASE phai 
+               WHEN 'Yes' THEN 1 
+               ELSE NULL 
+             END) AS N'Số SV Nam', 
+       Count(CASE phai 
+               WHEN 'No' THEN 1 
+               ELSE NULL 
+             END) AS N'Số SV Nữ', 
+       Count(*)   AS N'Tổng cộng' 
+FROM   sinhvien 
+       JOIN tinh 
+         ON sinhvien.tinh_id = tinh.id 
+GROUP  BY tinh.id, 
+          tinh.ten 
 
+-- 24) Thống kê kết quả thi lần 1 môn ‘Co so du lieu’ ở các lớp, theo mẫu sau
+ SELECT Lop.id AS MaLop, Lop.ten AS TenLop,
+ (
+	SELECT COUNT(*)
+	FROM
+	WHERE diem > 4
+ ) AS N'Số SV đạt'
+ FROM BangDiem
+ JOIN MonHoc ON BangDiem.monHoc_id = MonHoc.id
+ JOIN SinhVien ON BangDiem.sinhVien_id = SinhVien.id
+ JOIN Lop ON SinhVien.lop_id = Lop.id
+ WHERE lanThi = 1 AND MonHoc.ten = 'Co so du lieu'
+ GROUP BY Lop.id, Lop.ten
 
