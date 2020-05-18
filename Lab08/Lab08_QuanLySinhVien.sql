@@ -325,11 +325,11 @@ FROM   sinhvien
        JOIN tinh 
          ON sinhvien.tinh_id = tinh.id 
 GROUP  BY tinh.id, 
-          tinh.ten 
+          tinh.ten; 
 
 -- 24) Thống kê kết quả thi lần 1 môn ‘Co so du lieu’ ở các lớp, theo mẫu sau
-SELECT lop.id, 
-       lop.ten, 
+SELECT lop.id AS 'MaLop',
+       lop.ten AS 'TenLop', 
        Count(CASE 
                WHEN diem >= 4 THEN 1 
                ELSE NULL 
@@ -375,3 +375,15 @@ WHERE  diem = (SELECT Max(diem)
                FROM   bangdiem 
                WHERE  lanthi = A.lanthi)
 ORDER BY A.lanThi ASC;
+
+-- 26) Lập bảng tổng kết theo mẫu
+SELECT SinhVien.id AS 'MSSV',
+       CONCAT(SinhVien.ho, ' ', SinhVien.ten) AS 'HoTen',
+       ROUND(SUM(diem * heSo) / SUM(heSo), 1) AS 'DTB'
+FROM BangDiem
+JOIN SinhVien ON SinhVien.id = BangDiem.sinhVien_id
+JOIN MonHoc ON MonHoc.id = BangDiem.monHoc_id
+GROUP BY SinhVien.id,
+         SinhVien.ho,
+         SinhVien.ten;
+
