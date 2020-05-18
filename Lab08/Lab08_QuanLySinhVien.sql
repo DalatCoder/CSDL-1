@@ -7,8 +7,6 @@
 */
 ------------------------------------------------
 
-drop database Lab08_QuanLySinhVien;
-
 CREATE DATABASE Lab08_QuanLySinhVien;
 USE Lab08_QuanLySinhVien;
 
@@ -143,20 +141,28 @@ INSERT INTO BangDiem(sinhVien_id, monHoc_id, lanThi, diem) VALUES ('99QT002', 'Q
 SELECT * FROM BangDiem;
 
 -- 1) Liệt kê MSSV, Họ, Tên, Địa chỉ của tất cả các sinh viên
-SELECT id AS MSSV, CONCAT(ho, ' ', ten) AS HoTen, diaChi
+SELECT id AS MSSV,
+       CONCAT(ho, ' ', ten) AS HoTen,
+       diaChi
 FROM SinhVien;
 
 -- 2) Liệt kê MSSV, Họ, Tên, MS Tỉnh của tất cả các sinh viên. 
 -- Sắp xếp kết quả theo MS tỉnh, trong cùng tỉnh sắp xếp theo họ tên của sinh viên.
-SELECT id AS MSSV, CONCAT(ho, ' ', ten) AS HoTen, diaChi, tinh_id AS MS_Tinh
+SELECT id AS MSSV,
+       CONCAT(ho, ' ', ten) AS HoTen,
+       diaChi,
+       tinh_id AS MS_Tinh
 FROM SinhVien
-ORDER BY MS_Tinh, ten, ho ASC;
+ORDER BY MS_Tinh,
+         ten,
+         ho ASC;
 
 -- 3) Liệt kê các sinh viên nữ của tỉnh Long An
 SELECT *
 FROM SinhVien
 JOIN Tinh ON SinhVien.tinh_id = Tinh.id
-WHERE phai = 'No' AND Tinh.ten = 'Long An';
+WHERE phai = 'No'
+  AND Tinh.ten = 'Long An';
 
 -- 4) Liệt kê các sinh viên có sinh nhật trong tháng giêng.
 SELECT *
@@ -473,18 +479,18 @@ VALUES
 	('99QT001', 'Nguyen Thi', 'Oanh', '19/08/73', '04', '05/10/99', '99QT', 'No', '76 Hung Vuong, Q.5', '0901656324'),
 	('99QT002', 'Le My', 'Hanh', '20/05/76', '04', '05/10/99', '99QT', 'No', '12 Pham Ngoc Thach, Q.3', NULL);
 
-	-- 31) Cập nhật thuộc tính HBONG trong table SinhVienThanh 10000 cho tất cả các sinh viên.
-	UPDATE SinhVienTinh
-	SET hocBong = 10000;
-	SELECT * FROM SinhVienTinh;
+-- 31) Cập nhật thuộc tính HBONG trong table SinhVienThanh 10000 cho tất cả các sinh viên.
+UPDATE SinhVienTinh
+SET hocBong = 10000;
+SELECT * FROM SinhVienTinh;
 
-	-- 32) Tăng HBONG lên 10% cho các sinh viên nữ.
-	UPDATE SinhVienTinh
-	SET hocBong = hocBong * 1.1
-	WHERE phai = 'No';
-	SELECT * FROM SinhVienTinh ORDER BY phai;
+-- 32) Tăng HBONG lên 10% cho các sinh viên nữ.
+UPDATE SinhVienTinh
+SET hocBong = hocBong * 1.1
+WHERE phai = 'No';
+SELECT * FROM SinhVienTinh ORDER BY phai;
 
-	-- 33) Xóa tất cả các sinh viên có quê quán ở Long An ra khỏi table SinhVienTinh.
-	DELETE FROM SinhVienTinh WHERE tinh_id = (SELECT id FROM Tinh WHERE ten = 'Long An');
-	SELECT * FROM SinhVienTinh;
+-- 33) Xóa tất cả các sinh viên có quê quán ở Long An ra khỏi table SinhVienTinh.
+DELETE FROM SinhVienTinh WHERE tinh_id = (SELECT id FROM Tinh WHERE ten = 'Long An');
+SELECT * FROM SinhVienTinh;
 
