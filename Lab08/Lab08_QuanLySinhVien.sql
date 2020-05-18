@@ -100,29 +100,19 @@ SELECT * FROM MonHoc;
 
 SET DATEFORMAT dmy;
 INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('98TH001', 'Nguyen Van', 'An', '06/08/80', '01', '03/09/98', '98TH', 'Yes', '12 Tran Hung Dao, Q.1', '8234512');
-INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('98TH002', 'Le Thi', 'An', '17/10/79', '01', '03/09/98', '98TH', 'No', '23 CMT8, Q. Tan Binh', '0303234342');
-INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('98VT001', 'Nguyen Duc', 'Binh', '25/11/81', '02', '03/09/98', '98VT', 'Yes', '245 Lac Long Quan, Q.11', '8654323');
-INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('98VT002', 'Tran Ngoc', 'Anh', '19/08/80', '02', '03/09/98', '98VT', 'No', '242 Tran Hung Dao, Q.1', NULL);
-INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('99TH001', 'Ly Van Hung', 'Dung', '27/09/81', '03', '05/10/99', '99TH', 'Yes', '178 CMT8, Q. Tan Binh', '7563213');
-INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('99TH002', 'Van Minh', 'Hoang', '01/01/81', '04', '05/10/99', '99TH', 'Yes', '272 Ly Thuong Kiet, Q.10', '8341234');
-INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('99TH003', 'Nguyen', 'Tuan', '12/01/80', '03', '05/10/99', '99TH', 'Yes', '162 Tran Hung Dao, Q.5', NULL);
-INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('99TH004', 'Tran Van', 'Minh', '25/06/81', '04', '05/10/99', '99TH', 'Yes', '147 Dien Bien Phu, Q.3', '7236754');
-INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('99TH005', 'Nguyen Thai', 'Minh', '01/01/80', '04', '05/10/99', '99TH', 'Yes', '345 Le Dai Hanh, Q.11', NULL);
-INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('99VT001', 'Le Ngoc', 'Mai', '21/06/82', '01', '05/10/99', '99VT', 'No', '129 Tran Hung Dao, Q.1', '0903124534');
-INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('99QT001', 'Nguyen Thi', 'Oanh', '19/08/73', '04', '05/10/99', '99QT', 'No', '76 Hung Vuong, Q.5', '0901656324');
-INSERT INTO SinhVien(id, ho, ten, ngaySinh, tinh_id, ngayNhapHoc, lop_id, phai, diaChi, dienThoai)
-VALUES ('99QT002', 'Le My', 'Hanh', '20/05/76', '04', '05/10/99', '99QT', 'No', '12 Pham Ngoc Thach, Q.3', NULL);
+VALUES 
+	('98TH001', 'Nguyen Van', 'An', '06/08/80', '01', '03/09/98', '98TH', 'Yes', '12 Tran Hung Dao, Q.1', '8234512'),
+	('98TH002', 'Le Thi', 'An', '17/10/79', '01', '03/09/98', '98TH', 'No', '23 CMT8, Q. Tan Binh', '0303234342'),
+	('98VT001', 'Nguyen Duc', 'Binh', '25/11/81', '02', '03/09/98', '98VT', 'Yes', '245 Lac Long Quan, Q.11', '8654323'),
+	('98VT002', 'Tran Ngoc', 'Anh', '19/08/80', '02', '03/09/98', '98VT', 'No', '242 Tran Hung Dao, Q.1', NULL),
+	('99TH001', 'Ly Van Hung', 'Dung', '27/09/81', '03', '05/10/99', '99TH', 'Yes', '178 CMT8, Q. Tan Binh', '7563213'),
+	('99TH002', 'Van Minh', 'Hoang', '01/01/81', '04', '05/10/99', '99TH', 'Yes', '272 Ly Thuong Kiet, Q.10', '8341234'),
+	('99TH003', 'Nguyen', 'Tuan', '12/01/80', '03', '05/10/99', '99TH', 'Yes', '162 Tran Hung Dao, Q.5', NULL),
+	('99TH004', 'Tran Van', 'Minh', '25/06/81', '04', '05/10/99', '99TH', 'Yes', '147 Dien Bien Phu, Q.3', '7236754'),
+	('99TH005', 'Nguyen Thai', 'Minh', '01/01/80', '04', '05/10/99', '99TH', 'Yes', '345 Le Dai Hanh, Q.11', NULL),
+	('99VT001', 'Le Ngoc', 'Mai', '21/06/82', '01', '05/10/99', '99VT', 'No', '129 Tran Hung Dao, Q.1', '0903124534'),
+	('99QT001', 'Nguyen Thi', 'Oanh', '19/08/73', '04', '05/10/99', '99QT', 'No', '76 Hung Vuong, Q.5', '0901656324'),
+	('99QT002', 'Le My', 'Hanh', '20/05/76', '04', '05/10/99', '99QT', 'No', '12 Pham Ngoc Thach, Q.3', NULL);
 SELECT * FROM SinhVien;
 
 INSERT INTO BangDiem(sinhVien_id, monHoc_id, lanThi, diem) VALUES ('98TH001', 'TA01', 1, 8.5);
@@ -395,4 +385,33 @@ JOIN Lop ON SinhVien.lop_id = Lop.id
 JOIN Khoa ON Lop.khoa_id = Khoa.id
 WHERE Tinh.ten = 'Long An'
 GROUP BY Lop.nienKhoa, Khoa.id, Khoa.ten;
+
+-- 28) Nhập vào MSSV, in ra bảng điểm của sinh viên đó theo mẫu sau (điểm in ra lấy điểm cao nhất trong các lần thi)
+CREATE PROC usp_Get_Student_Grades 
+  @id CHAR(7) 
+AS 
+  IF NOT EXISTS 
+  ( 
+         SELECT * 
+         FROM   bangdiem 
+         WHERE  sinhvien_id = @id) 
+	PRINT N'Sinh viên có mã số ' + @id + N' không tồn tại trong CSDL!' 
+  ELSE 
+	  BEGIN 
+		SELECT   monhoc.id   AS 'MSMH', 
+				 monhoc.ten  AS N'Tên MH', 
+				 monhoc.heso AS N'Hệ số', 
+				 Max(diem)   AS N'Điểm' 
+		FROM     bangdiem 
+		JOIN     monhoc ON monhoc.id = bangdiem.monhoc_id 
+		WHERE    sinhvien_id = @id 
+		GROUP BY monhoc.id, 
+				 monhoc.ten, 
+				 monhoc.heso;    
+	  END;
+
+EXEC usp_Get_Student_Grades '98TH001';
+EXEC usp_Get_Student_Grades '98TH002';
+EXEC usp_Get_Student_Grades '98TH003';
+
 
