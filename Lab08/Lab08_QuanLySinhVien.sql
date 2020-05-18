@@ -306,70 +306,74 @@ GROUP BY Lop.id, Lop.ten
 ORDER BY SoLuongSV;
 
 -- 23) Thống kê số lượng sinh viên ở mỗi tỉnh theo mẫu sau:
-SELECT tinh.id    AS MaTinh, 
-       tinh.ten   AS TenTinh, 
-       Count(CASE phai 
-               WHEN 'Yes' THEN 1 
-               ELSE NULL 
-             END) AS N'Số SV Nam', 
-       Count(CASE phai 
-               WHEN 'No' THEN 1 
-               ELSE NULL 
-             END) AS N'Số SV Nữ', 
-       Count(*)   AS N'Tổng cộng' 
-FROM   sinhvien 
-       JOIN tinh 
-         ON sinhvien.tinh_id = tinh.id 
-GROUP  BY tinh.id, 
-          tinh.ten; 
+SELECT
+    tinh.id AS MaTinh,
+    tinh.ten AS TenTinh,
+    COUNT(CASE phai
+        WHEN 'Yes' THEN 1
+        ELSE NULL
+    END) AS N'Số SV Nam',
+    COUNT(CASE phai
+        WHEN 'No' THEN 1
+        ELSE NULL
+    END) AS N'Số SV Nữ',
+    COUNT(*) AS N'Tổng cộng'
+FROM sinhvien
+JOIN tinh
+    ON sinhvien.tinh_id = tinh.id
+GROUP BY tinh.id,
+         tinh.ten;
 
 -- 24) Thống kê kết quả thi lần 1 môn ‘Co so du lieu’ ở các lớp, theo mẫu sau
-SELECT lop.id AS 'MaLop',
-       lop.ten AS 'TenLop', 
-       Count(CASE 
-               WHEN diem >= 4 THEN 1 
-               ELSE NULL 
-             END)                      AS N'Số SV đạt', 
-       ( Count(CASE 
-                 WHEN diem >= 4 THEN 1 
-                 ELSE NULL 
-               END) * 100 / Count(*) ) AS N'Tỉ lệ đạt (%)', 
-       Count(CASE 
-               WHEN diem < 4 THEN 1 
-               ELSE NULL 
-             END)                      AS N'Số SV không đạt', 
-       ( Count(CASE 
-                 WHEN diem < 4 THEN 1 
-                 ELSE NULL 
-               END) * 100 / Count(*) ) AS N'Tỉ lệ không đạt (%)', 
-       Count(*)                        AS TongSo 
-FROM   bangdiem 
-       JOIN monhoc 
-         ON bangdiem.monhoc_id = monhoc.id 
-       JOIN sinhvien 
-         ON sinhvien.id = bangdiem.sinhvien_id 
-       JOIN lop 
-         ON sinhvien.lop_id = lop.id 
-WHERE  lanthi = 1 
-       AND monhoc.ten = 'Co so du lieu' 
-GROUP  BY lop.id, 
-          lop.ten; 
+SELECT
+    lop.id AS 'MaLop',
+    lop.ten AS 'TenLop',
+    COUNT(CASE
+        WHEN diem >= 4 THEN 1
+        ELSE NULL
+    END) AS N'Số SV đạt',
+    (COUNT(CASE
+        WHEN diem >= 4 THEN 1
+        ELSE NULL
+    END) * 100 / COUNT(*)) AS N'Tỉ lệ đạt (%)',
+    COUNT(CASE
+        WHEN diem < 4 THEN 1
+        ELSE NULL
+    END) AS N'Số SV không đạt',
+    (COUNT(CASE
+        WHEN diem < 4 THEN 1
+        ELSE NULL
+    END) * 100 / COUNT(*)) AS N'Tỉ lệ không đạt (%)',
+    COUNT(*) AS TongSo
+FROM bangdiem
+JOIN monhoc
+    ON bangdiem.monhoc_id = monhoc.id
+JOIN sinhvien
+    ON sinhvien.id = bangdiem.sinhvien_id
+JOIN lop
+    ON sinhvien.lop_id = lop.id
+WHERE lanthi = 1
+AND monhoc.ten = 'Co so du lieu'
+GROUP BY lop.id,
+         lop.ten;
 
 -- 25) Lọc ra điểm cao nhất trong các lần thi cho các sinh viên theo mẫu sau (điểm in ra của
 -- mỗi môn là điểm cao nhất trong các lần thi của môn đó):
-SELECT A.lanthi, 
-       A.sinhvien_id        AS 'MSSV', 
-       monhoc.id            AS 'MSMH', 
-       monhoc.ten           AS N'Tên MH ', 
-       monhoc.heso          AS N'Hệ số', 
-       A.diem               AS N'Điểm', 
-       A.diem * monhoc.heso AS 'KetQua' 
-FROM   bangdiem A 
-       JOIN monhoc 
-         ON monhoc.id = A.monhoc_id 
-WHERE  diem = (SELECT Max(diem) 
-               FROM   bangdiem 
-               WHERE  lanthi = A.lanthi)
+SELECT
+    A.lanthi,
+    A.sinhvien_id AS 'MSSV',
+    monhoc.id AS 'MSMH',
+    monhoc.ten AS N'Tên MH ',
+    monhoc.heso AS N'Hệ số',
+    A.diem AS N'Điểm',
+    A.diem * monhoc.heso AS 'KetQua'
+FROM bangdiem A
+JOIN monhoc
+    ON monhoc.id = A.monhoc_id
+WHERE diem = (SELECT
+    MAX(diem)
+FROM bangdiem
+WHERE lanthi = A.lanthi)
 ORDER BY A.lanThi ASC;
 
 -- 26) Lập bảng tổng kết theo mẫu
@@ -384,62 +388,73 @@ GROUP BY SinhVien.id,
          SinhVien.ten;
 
 -- 27) Thống kê số lượng sinh viên tỉnh ‘Long An’ đang theo học ở các khoa, theo mẫu sau:
-SELECT Lop.nienKhoa AS N'Năm học', Khoa.id AS 'MSKhoa', Khoa.ten AS 'TenKhoa', COUNT(*) AS N'Số lượng SV'
+SELECT Lop.nienKhoa AS N'Năm học',
+                        Khoa.id AS 'MSKhoa',
+                        Khoa.ten AS 'TenKhoa',
+                        COUNT(*) AS N'Số lượng SV'
 FROM SinhVien
 JOIN Tinh ON SinhVien.tinh_id = Tinh.id
 JOIN Lop ON SinhVien.lop_id = Lop.id
 JOIN Khoa ON Lop.khoa_id = Khoa.id
 WHERE Tinh.ten = 'Long An'
-GROUP BY Lop.nienKhoa, Khoa.id, Khoa.ten;
+GROUP BY Lop.nienKhoa,
+         Khoa.id,
+         Khoa.ten;
+
 
 -- 28) Nhập vào MSSV, in ra bảng điểm của sinh viên đó theo mẫu sau (điểm in ra lấy điểm cao nhất trong các lần thi)
-CREATE PROC usp_Get_Student_Grades 
-  @id CHAR(7) 
-AS 
-  IF NOT EXISTS(SELECT * FROM bangdiem WHERE sinhvien_id = @id) 
-	PRINT N'Sinh viên có mã số ' + @id + N' không tồn tại trong CSDL!' 
-  ELSE 
-	  BEGIN 
-		SELECT   monhoc.id   AS 'MSMH', 
-				 monhoc.ten  AS N'Tên MH', 
-				 monhoc.heso AS N'Hệ số', 
-				 Max(diem)   AS N'Điểm' 
-		FROM     bangdiem 
-		JOIN     monhoc ON monhoc.id = bangdiem.monhoc_id 
-		WHERE    sinhvien_id = @id 
-		GROUP BY monhoc.id, 
-				 monhoc.ten, 
-				 monhoc.heso;    
-	  END;
+CREATE PROC usp_Get_Student_Grades @id char(7)
+AS
+  IF NOT EXISTS (SELECT * FROM bangdiem WHERE sinhvien_id = @id)
+    PRINT N'Sinh viên có mã số ' + @id + N' không tồn tại trong CSDL!'
+  ELSE
+  BEGIN
+    SELECT
+      monhoc.id AS 'MSMH',
+      monhoc.ten AS N'Tên MH',
+      monhoc.heso AS N'Hệ số',
+      MAX(diem) AS N'Điểm'
+    FROM bangdiem
+    JOIN monhoc
+      ON monhoc.id = bangdiem.monhoc_id
+    WHERE sinhvien_id = @id
+    GROUP BY monhoc.id,
+             monhoc.ten,
+             monhoc.heso;
+  END;
 
 EXEC usp_Get_Student_Grades '98TH001';
 EXEC usp_Get_Student_Grades '98TH002';
 EXEC usp_Get_Student_Grades '98TH003';
 
 -- 29) Nhập vào MSSV, in ra bảng tổng kết của lớp đó, theo mẫu sau:
-CREATE PROC usp_Get_Student_Summary
-	@id CHAR(7)
+CREATE PROC usp_Get_Student_Summary @id char(7)
 AS
-  IF NOT EXISTS(SELECT * FROM bangdiem WHERE sinhvien_id = @id) 
-	PRINT N'Sinh viên có mã số ' + @id + N' không tồn tại trong CSDL!' 
+  IF NOT EXISTS (SELECT * FROM bangdiem WHERE sinhvien_id = @id)
+    PRINT N'Sinh viên có mã số ' + @id + N' không tồn tại trong CSDL!'
   ELSE
-	BEGIN
-		SELECT SinhVien.id AS 'MSSV', 
-		SinhVien.ho AS N'Họ', 
-		SinhVien.ten AS N'Tên', 
-		ROUND(SUM(diem * heSo) / SUM(heSo), 1) AS N'ĐTB',
-		CASE
-			WHEN SUM(diem * heSo) / SUM(heSo) >= 8.0 THEN N'Giỏi'
-			WHEN SUM(diem * heSo) / SUM(heSo) >= 6.5 THEN N'Khá'
-			WHEN SUM(diem * heSo) / SUM(heSo) >= 5.0 THEN N'TB'
-			ELSE N'Yếu'
-		END AS N'Xếp loại'
-		FROM BangDiem
-		JOIN SinhVien ON BangDiem.sinhVien_id = SinhVien.id
-		JOIN MonHoc ON BangDiem.monHoc_id = MonHoc.id
-		WHERE SinhVien.id = @id
-		GROUP BY SinhVien.id, SinhVien.ho, SinhVien.ten
-	END;
+  BEGIN
+    SELECT
+      SinhVien.id AS 'MSSV',
+      SinhVien.ho AS N'Họ',
+      SinhVien.ten AS N'Tên',
+      ROUND(SUM(diem * heSo) / SUM(heSo), 1) AS N'ĐTB',
+      CASE
+        WHEN SUM(diem * heSo) / SUM(heSo) >= 8.0 THEN N'Giỏi'
+        WHEN SUM(diem * heSo) / SUM(heSo) >= 6.5 THEN N'Khá'
+        WHEN SUM(diem * heSo) / SUM(heSo) >= 5.0 THEN N'TB'
+        ELSE N'Yếu'
+      END AS N'Xếp loại'
+    FROM BangDiem
+    JOIN SinhVien
+      ON BangDiem.sinhVien_id = SinhVien.id
+    JOIN MonHoc
+      ON BangDiem.monHoc_id = MonHoc.id
+    WHERE SinhVien.id = @id
+    GROUP BY SinhVien.id,
+             SinhVien.ho,
+             SinhVien.ten
+  END;
 
 EXEC usp_Get_Student_Summary '98TH001';
 EXEC usp_Get_Student_Summary '98TH002';
@@ -488,9 +503,20 @@ SELECT * FROM SinhVienTinh;
 UPDATE SinhVienTinh
 SET hocBong = hocBong * 1.1
 WHERE phai = 'No';
-SELECT * FROM SinhVienTinh ORDER BY phai;
+
+SELECT *
+FROM SinhVienTinh
+ORDER BY phai;
+
 
 -- 33) Xóa tất cả các sinh viên có quê quán ở Long An ra khỏi table SinhVienTinh.
-DELETE FROM SinhVienTinh WHERE tinh_id = (SELECT id FROM Tinh WHERE ten = 'Long An');
-SELECT * FROM SinhVienTinh;
+DELETE
+FROM SinhVienTinh
+WHERE tinh_id =
+    (SELECT id
+     FROM Tinh
+     WHERE ten = 'Long An');
+
+SELECT *
+FROM SinhVienTinh;
 
