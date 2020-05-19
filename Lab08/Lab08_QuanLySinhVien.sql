@@ -309,13 +309,13 @@ ORDER BY SoLuongSV;
 SELECT
     tinh.id AS MaTinh,
     tinh.ten AS TenTinh,
-    COUNT(CASE phai
+    SUM(CASE phai
         WHEN 'Yes' THEN 1
-        ELSE NULL
+        ELSE 0
     END) AS N'Số SV Nam',
-    COUNT(CASE phai
+    SUM(CASE phai
         WHEN 'No' THEN 1
-        ELSE NULL
+        ELSE 0
     END) AS N'Số SV Nữ',
     COUNT(*) AS N'Tổng cộng'
 FROM sinhvien
